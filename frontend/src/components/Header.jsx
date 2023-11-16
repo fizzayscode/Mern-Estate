@@ -1,8 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
+import { useAuth } from "../context/Authcontext";
 
 const Header = () => {
+  const auth = useAuth();
   return (
     <header className=" bg-slate-200 shadow-md px-2 ">
       <div className="flex justify-between max-lg py-3 flex-wrap items-center max-w-6xl mx-auto">
@@ -26,15 +28,27 @@ const Header = () => {
           <FaSearch />
         </div>
         <ul className="flex gap-4 text-xs text-slate-700 font-bold  ">
-          <li className="hidden sm:inline hover:underline">
+          <li className="hidden sm:inline hover:underline self-center">
             <Link to={"/"}>HOME</Link>
           </li>
-          <li className="hidden sm:inline hover:underline">
+          <li className="hidden sm:inline hover:underline self-center">
             <Link to={"/about"}>ABOUT</Link>
           </li>
-          <li className="hover:underline">
-            <Link to={"/login"}>LOGIN</Link>
-          </li>
+          {auth?.isLoggedIn ? (
+            <li className="hover:underline self-center">
+              <Link to={"/profile"}>
+                <img
+                  className="rounded-full w-8 h-8"
+                  src={auth?.user.avatar}
+                  alt=""
+                />
+              </Link>
+            </li>
+          ) : (
+            <li className="hover:underline">
+              <Link to={"/login"}>LOGIN</Link>
+            </li>
+          )}
         </ul>
       </div>
     </header>
