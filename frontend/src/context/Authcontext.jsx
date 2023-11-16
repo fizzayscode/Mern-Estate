@@ -3,6 +3,7 @@ import {
   checkAuthStatus,
   googleAuth,
   loginUser,
+  logoutUser,
   signUpUser,
 } from "../helpers/apiCommunicator";
 import { useNavigate } from "react-router-dom";
@@ -14,35 +15,33 @@ const Authcontext = ({ children }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // fetch if the user cookies are valid then skip login
-    const checkStatus = async () => {
-      try {
-        const data = await checkAuthStatus();
-        const user = data.user;
-        console.log(user);
-        if (user) {
-          setUser({
-            username: user.username,
-            email: user.email,
-            password: user.password,
-            avatar: user.avatar.trim(),
-          });
-          console.log(user);
-          setIsLoggedIn(true);
-        } else {
-          setUser(null);
-          setIsLoggedIn(false);
-          console.log(e);
-        }
-        console.log(data);
-      } catch (e) {
+  const checkStatus = async () => {
+    try {
+      const data = await checkAuthStatus();
+      const user = data.user;
+
+      if (user) {
+        setUser({
+          username: user.username,
+          email: user.email,
+          password: user.password,
+          avatar: user.avatar.trim(),
+        });
+
+        setIsLoggedIn(true);
+      } else {
         setUser(null);
         setIsLoggedIn(false);
         console.log(e);
       }
-      // console.log("here======================================" + user.email);
-    };
+    } catch (e) {
+      setUser(null);
+      setIsLoggedIn(false);
+    }
+    // console.log("here======================================" + user.email);
+  };
+  useEffect(() => {
+    // fetch if the user cookies are valid then skip login
     checkStatus();
   }, []);
 
@@ -114,17 +113,27 @@ const Authcontext = ({ children }) => {
     }
   };
 
+  const logout = async () => {
+    // Replace this with your actual logout logic
+    const data = await logoutUser();
+    console.log(data);
+    setUser({ email: "", name: "", password: "" });
+    setIsLoggedIn(false);
+  };
+
   return (
     <GlobalContext.Provider
       value={{
         signup,
         error,
         user,
+        logout,
         setUser,
         isLoggedIn,
         setIsLoggedIn,
         login,
         googleAuthSign,
+        checkStatus,
       }}
     >
       {children}

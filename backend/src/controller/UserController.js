@@ -235,4 +235,17 @@ const googleLogin = async (req, res, next) => {
   // }
 };
 
-module.exports = { loginUser, signUpUser, verifyUser, googleLogin };
+const logout = (req, res, next) => {
+  console.log("Clearing cookie...");
+  res.clearCookie(process.env.COOKIE_NAME, {
+    path: "/",
+    domain: "localhost",
+    httpOnly: true,
+    // encrypt thr cookie in a signed format
+    signed: true,
+  });
+  console.log("Cookie cleared!");
+  res.status(200).json({ message: "successfully signed out" });
+};
+
+module.exports = { loginUser, signUpUser, verifyUser, googleLogin, logout };

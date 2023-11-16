@@ -44,6 +44,16 @@ export const googleAuth = async (email, avatar) => {
   return data;
 };
 
+export const logoutUser = async () => {
+  const response = await api.get("/users/logout");
+  if (response.status !== 200) {
+    throw new Error("Unable to logout ");
+  }
+  const data = response.data;
+  console.log(data);
+  return data;
+};
+
 export const checkAuthStatus = async () => {
   const response = await api.get("/users/auth-status");
   if (response.status !== 200) {
