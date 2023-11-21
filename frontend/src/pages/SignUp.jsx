@@ -8,8 +8,9 @@ const SignUp = () => {
   const navigate = useNavigate();
   const auth = useAuth();
   const [signUpData, setsignUpData] = useState({
-    username: "",
+    name: "",
     email: "",
+    phone: "",
     password: "",
   });
   const handlechange = (e) => {
@@ -23,12 +24,13 @@ const SignUp = () => {
       await auth?.signup(
         signUpData.username,
         signUpData.email,
+        signUpData.phone,
         signUpData.password
       );
       toast.success("signed up successfully", { id: "signup" });
       navigate("/");
     } catch (e) {
-      toast.error(e.response.data.message, { id: "signup" });
+      toast.error(e.response, { id: "signup" });
       console.log(e);
     }
   };

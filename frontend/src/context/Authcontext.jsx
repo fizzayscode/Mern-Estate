@@ -5,12 +5,19 @@ import {
   loginUser,
   logoutUser,
   signUpUser,
+  updateUser,
 } from "../helpers/apiCommunicator";
 import { useNavigate } from "react-router-dom";
 const GlobalContext = createContext(null);
 
 const Authcontext = ({ children }) => {
-  const [user, setUser] = useState({ username: "", email: "", avatar: "" });
+  const navigate = useNavigate();
+  const [user, setUser] = useState({
+    id: "",
+    username: "",
+    email: "",
+    avatar: "",
+  });
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,6 +29,7 @@ const Authcontext = ({ children }) => {
 
       if (user) {
         setUser({
+          id: user.id,
           username: user.username,
           email: user.email,
           password: user.password,
@@ -32,7 +40,6 @@ const Authcontext = ({ children }) => {
       } else {
         setUser(null);
         setIsLoggedIn(false);
-        console.log(e);
       }
     } catch (e) {
       setUser(null);
@@ -52,10 +59,12 @@ const Authcontext = ({ children }) => {
       const data = await signUpUser(email, name, password);
       setError("");
       if (data) {
+        console.log(data.user.avatar);
         setUser({
-          username: data.username,
-          email: data.email,
-          avatar: data.avatar.trim(),
+          id: data.user.id,
+          username: data.user.username,
+          email: data.user.email,
+          avatar: data.user.avatar.trim(),
         });
         setIsLoggedIn(true);
         console.log(data);
@@ -75,9 +84,10 @@ const Authcontext = ({ children }) => {
       const data = await loginUser(email, password);
       if (data) {
         setUser({
-          username: data.username,
-          email: data.email,
-          avatar: data.avatar.trim(),
+          id: data.user.id,
+          username: data.user.username,
+          email: data.user.email,
+          avatar: data.user.avatar.trim(),
         });
         setIsLoggedIn(true);
       } else {
@@ -91,12 +101,30 @@ const Authcontext = ({ children }) => {
     }
   };
 
+  const update = async (id, change) => {
+    try {
+      const data = await updateUser(id, change);
+      if (data) {
+        setUser({
+          id: data.user.id,
+          username: data.user.username,
+          email: data.user.email,
+          avatar: data.user.avatar.trim(),
+        });
+        setIsLoggedIn(true);
+      }
+    } catch (e) {
+      throw e;
+    }
+  };
+
   const googleAuthSign = async (email, avatar) => {
     try {
       const data = await googleAuth(email, avatar);
       console.log(data);
       if (data) {
         setUser({
+          id: user.id,
           username: data.username,
           email: data.email,
           avatar: data.user.avatar.trim(),
@@ -117,7 +145,7 @@ const Authcontext = ({ children }) => {
     // Replace this with your actual logout logic
     const data = await logoutUser();
     console.log(data);
-    setUser({ email: "", name: "", password: "" });
+    setUser({ id: "", email: "", name: "", password: "" });
     setIsLoggedIn(false);
   };
 
@@ -134,6 +162,7 @@ const Authcontext = ({ children }) => {
         login,
         googleAuthSign,
         checkStatus,
+        update,
       }}
     >
       {children}
@@ -144,4 +173,5 @@ export const useAuth = () => {
   return useContext(GlobalContext);
 };
 
+// {user,isloggedin,logout}= usecontext(globalcontext)
 export default Authcontext;

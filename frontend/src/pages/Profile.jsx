@@ -1,21 +1,66 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useAuth } from "../context/Authcontext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
+import { app } from "../firebase";
 
 const Profile = () => {
   const auth = useAuth();
   const fileRef = useRef(null);
+  const { id } = useParams();
   const navigate = useNavigate();
+
   const [updateData, setUpdateData] = useState({
+    id: auth.user.id,
     username: auth.user.username,
     email: auth.user.email,
     password: auth.user.password,
   });
+  const [file, setFile] = useState();
+  const [filePercentage, setFilePercentage] = useState(0);
+  const [fileUploadError, setFileUploadError] = useState(false);
 
   const handleChange = (e) => {
     setUpdateData({ ...updateData, [e.target.name]: e.target.value });
   };
+
+  const handleFileUpload = (file) => {
+    const storage = getStorage(app);
+    // if someone upload the same file twice we want to make every picture unique
+    const fileName = new Date().getTime() + file.name;
+    const storageRef = ref(storage, fileName);
+    // want to see the percentage of our upload by usingn  this uploadBytesResumable
+    const uploadTask = uploadBytesResumable(storageRef, file);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        setFilePercentage(Math.round(progress));
+      },
+      (error) => {
+        setFileUploadError(true);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadurl) => {
+          setUpdateData({ ...updateData, avatar: downloadurl });
+        });
+      }
+    );
+  };
+
+  useEffect(() => {
+    if (file) {
+      handleFileUpload(file);
+    }
+  }, [file]);
 
   const handleSignOut = async () => {
     try {
@@ -24,21 +69,54 @@ const Profile = () => {
       toast.success("signed out successfully", { id: "signout" });
     } catch (e) {
       console.log(e);
-      toast.error("sign out failed", { id: "signout" });
+      toast.error(e.response.data.message, { id: "signout" });
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      toast.loading("updating user", { id: "update" });
+      console.log(auth);
+      await auth.update(id, updateData);
+      toast.success("updated user successfully", { id: "update" });
+    } catch (e) {
+      toast.error(e.response.data.message, { id: "update" });
     }
   };
 
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h2 className="text-center text-3xl font-bold ">Profile</h2>
-      <form className="flex flex-col gap-3">
-        <input hidden ref={fileRef} type="file" name="" id="" />
+      <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+        <input
+          hidden
+          ref={fileRef}
+          type="file"
+          name=""
+          id="hello"
+          onChange={(e) => setFile(e.target.files[0])}
+          accept="image/*"
+        />
         <img
-          className="rounded-full w-25 h-25 object-cover align-middle cursor-pointer self-center my-4"
-          src={auth.user.avatar}
+          className="rounded-full max-w-xs w-full h-full box-border object-cover  cursor-pointer self-center my-4"
+          src={updateData.avatar ? updateData.avatar : auth.user.avatar}
           alt="user avatar"
           onClick={() => fileRef.current.click()}
         />
+        <p className="text-center text-sm my-2">
+          {fileUploadError ? (
+            <span className="text-red-700"> Error Image Upload</span>
+          ) : filePercentage > 0 && filePercentage < 100 ? (
+            <span className="text-slate-700">
+              Uploading file...{filePercentage}%
+            </span>
+          ) : filePercentage === 100 ? (
+            <span className="text-green-600">Upload completed</span>
+          ) : (
+            ""
+          )}
+        </p>
         <input
           className="p-3 outline-none border rounded-lg"
           type="text"

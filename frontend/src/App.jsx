@@ -9,8 +9,11 @@ import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import Header from "./components/Header";
 import PrivateRoute from "./components/PrivateRoute";
+import { useAuth } from "./context/Authcontext";
 
 function App() {
+  const auth = useAuth();
+
   return (
     <>
       <Header />
@@ -19,8 +22,8 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
-        <Route element={<PrivateRoute />}>
-          <Route path="/profile" element={<Profile />} />
+        <Route element={<PrivateRoute AUTH={auth} />}>
+          <Route path="/profile/:id" element={<Profile />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

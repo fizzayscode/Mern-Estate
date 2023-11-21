@@ -53,6 +53,15 @@ export const logoutUser = async () => {
   console.log(data);
   return data;
 };
+export const updateUser = async (id, change) => {
+  const response = await api.patch(`/users/update/${id}`, change);
+  if (response.status !== 200) {
+    throw new Error("Unable to authenticate ");
+  }
+  const data = response.data;
+  console.log(data);
+  return data;
+};
 
 export const checkAuthStatus = async () => {
   const response = await api.get("/users/auth-status");
@@ -60,6 +69,5 @@ export const checkAuthStatus = async () => {
     throw new Error("Unable to authenticate ");
   }
   const data = response.data;
-  console.log(data);
   return data;
 };

@@ -8,11 +8,11 @@ import Authcontext from "./context/Authcontext.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <Authcontext>
-      <BrowserRouter>
+    <BrowserRouter>
+      <Authcontext>
         <Toaster position="top-center" />
         <App />
-      </BrowserRouter>
-    </Authcontext>
+      </Authcontext>
+    </BrowserRouter>
   </React.StrictMode>
 );

@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { Link } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import { useAuth } from "../context/Authcontext";
 
 const Header = () => {
   const auth = useAuth();
+
+  console.log("keeps rendering ");
   return (
     <header className=" bg-slate-200 shadow-md px-2 ">
       <div className="flex justify-between max-lg py-3 flex-wrap items-center max-w-6xl mx-auto">
@@ -36,7 +38,7 @@ const Header = () => {
           </li>
           {auth?.isLoggedIn ? (
             <li className="hover:underline self-center">
-              <Link to={"/profile"}>
+              <Link to={`/profile/${auth?.user?.id}`}>
                 <img
                   className="rounded-full w-8 h-8"
                   src={auth?.user.avatar}

@@ -169,7 +169,7 @@ const googleLogin = async (req, res, next) => {
       data: {
         username: username,
         email: email,
-        avatar: avatar,
+        avatar: avatar.trim(),
         password: hashedPassword,
       },
     });
@@ -248,4 +248,53 @@ const logout = (req, res, next) => {
   res.status(200).json({ message: "successfully signed out" });
 };
 
-module.exports = { loginUser, signUpUser, verifyUser, googleLogin, logout };
+const updateUser = async (req, res, next) => {
+  const { id } = req.params;
+  const decoded_id = res.locals.jwtData.id;
+
+  const { username, email, password, avatar } = req.body;
+
+  if (id !== decoded_id) {
+    return next(errorHandler(401, "cant update someones account"));
+  }
+
+  const exisitingUser = await prisma.user.findUnique({
+    where: { email: email },
+  });
+  console.log(exisitingUser);
+
+  if (exisitingUser && exisitingUser.email !== res.locals.jwtData.email) {
+    return next(errorHandler(401, "user with email already exists"));
+  }
+
+  try {
+    const user = await prisma.user.findUnique({ where: { id: decoded_id } });
+    if (!user) {
+      return next(errorHandler(404, "no user found"));
+    }
+
+    const updatedUser = await prisma.user.update({
+      where: { id: decoded_id },
+      data: {
+        username: username || user.username,
+        email: email || user.email,
+        avatar: avatar || user.avatar,
+        password: password ? await encryptPassword(password) : user.password,
+      },
+    });
+    const { password: userpassword, ...rest } = updatedUser;
+
+    res.status(200).json({ message: "user updated", user: rest });
+  } catch (e) {
+    next(e);
+  }
+};
+
+module.exports = {
+  loginUser,
+  signUpUser,
+  verifyUser,
+  googleLogin,
+  logout,
+  updateUser,
+};

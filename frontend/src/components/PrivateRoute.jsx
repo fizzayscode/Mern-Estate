@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/Authcontext";
 
@@ -12,7 +12,6 @@ const PrivateRoute = () => {
       await auth?.checkStatus();
       setLoading(false);
     };
-
     checkAuthentication();
   }, []);
 
