@@ -63,6 +63,7 @@ const SignUp = () => {
           name="password"
           onChange={handlechange}
         />
+        
         <button
           type="submit"
           className="font-bold bg-slate-700 rounded-lg text-white py-2 hover:opacity-90 disabled:opacity-80"

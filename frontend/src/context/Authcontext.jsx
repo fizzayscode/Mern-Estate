@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   checkAuthStatus,
+  createListing,
   googleAuth,
   loginUser,
   logoutUser,
@@ -124,7 +125,7 @@ const Authcontext = ({ children }) => {
       console.log(data);
       if (data) {
         setUser({
-          id: user.id,
+          id: data.id,
           username: data.username,
           email: data.email,
           avatar: data.user.avatar.trim(),
@@ -137,6 +138,16 @@ const Authcontext = ({ children }) => {
     } catch (e) {
       setUser(null);
       setIsLoggedIn(false);
+      throw e;
+    }
+  };
+  const addListing = async (items) => {
+    try {
+      const data = await createListing(items);
+      if (data) {
+        console.log(data);
+      }
+    } catch (e) {
       throw e;
     }
   };
@@ -163,6 +174,7 @@ const Authcontext = ({ children }) => {
         googleAuthSign,
         checkStatus,
         update,
+        addListing,
       }}
     >
       {children}

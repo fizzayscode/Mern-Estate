@@ -71,3 +71,12 @@ export const checkAuthStatus = async () => {
   const data = response.data;
   return data;
 };
+
+export const createListing = async (items) => {
+  const response = await api.post("/users/create-listing", items);
+  if (response.status !== 201) {
+    throw new Error("Unable to authenticate ");
+  }
+  const data = response.data;
+  return data;
+};

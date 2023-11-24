@@ -290,6 +290,79 @@ const updateUser = async (req, res, next) => {
   }
 };
 
+const createListing = async (req, res, next) => {
+  const {
+    name,
+    description,
+    address,
+    regularPrice,
+    discountPrice,
+    bathrooms,
+    bedrooms,
+    furnished,
+    parking,
+    type,
+    offer,
+    images,
+  } = req.body;
+  console.log(req.body);
+  if (
+    !name ||
+    !description ||
+    !address ||
+    !regularPrice ||
+    !discountPrice ||
+    !bathrooms ||
+    !bedrooms ||
+    furnished == null ||
+    parking == null ||
+    !type ||
+    offer == null ||
+    !images
+  ) {
+    return next(errorHandler(400, "have to provide all fields"));
+  }
+  if (name.trim() == "" || description.trim() == "" || address.trim() == "") {
+    return next(errorHandler(400, "fill in the fields"));
+  }
+  const user = await prisma.user.findUnique({
+    where: { id: res.locals.jwtData.id },
+  });
+  console.log(user);
+  if (!user) {
+    return next(errorHandler(400, "cant create a lsiting if theres no user"));
+  }
+
+  try {
+    const createdListing = await prisma.listing.create({
+      data: {
+        name,
+        description,
+        address,
+        regularPrice,
+        discountPrice,
+        bathrooms,
+        bedrooms,
+        furnished,
+        parking,
+        type,
+        offer,
+        images,
+        user: { connect: { id: user.id } },
+      },
+    });
+
+    if (!createListing) {
+      return next(errorHandler(500, "something went wrong in creating"));
+    }
+    res
+      .status(201)
+      .json({ message: "listing created", listing: createdListing });
+  } catch (e) {
+    return next(errorHandler(500, "something went wrong"));
+  }
+};
+
 module.exports = {
   loginUser,
   signUpUser,
@@ -297,4 +370,5 @@ module.exports = {
   googleLogin,
   logout,
   updateUser,
+  createListing,
 };

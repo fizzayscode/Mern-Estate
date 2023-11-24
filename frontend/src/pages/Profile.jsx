@@ -99,7 +99,7 @@ const Profile = () => {
           accept="image/*"
         />
         <img
-          className="rounded-full max-w-xs w-full h-full box-border object-cover  cursor-pointer self-center my-4"
+          className="rounded-fullw-25 h-25 rounded-full box-border object-cover  cursor-pointer self-center my-4"
           src={updateData.avatar ? updateData.avatar : auth.user.avatar}
           alt="user avatar"
           onClick={() => fileRef.current.click()}
@@ -141,11 +141,19 @@ const Profile = () => {
           value={updateData.password}
           onChange={handleChange}
         />
+
         <button
           type="submit"
           className="font-bold bg-slate-700 rounded-lg text-white py-2 hover:opacity-90 disabled:opacity-80"
         >
           UPDATE
+        </button>
+
+        <button
+          type="button"
+          className="font-bold bg-green-700 rounded-lg text-white py-2 hover:opacity-90 disabled:opacity-80"
+        >
+          <Link to={"/create-listing"}>CREATE LISTING</Link>
         </button>
       </form>
       <div className="flex justify-between py-3 text-sm font-semibold text-red-700">
