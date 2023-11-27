@@ -2,10 +2,14 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   checkAuthStatus,
   createListing,
+  deleteListing,
+  getAllListings,
+  getParticularListing,
   googleAuth,
   loginUser,
   logoutUser,
   signUpUser,
+  updateParticularListing,
   updateUser,
 } from "../helpers/apiCommunicator";
 import { useNavigate } from "react-router-dom";
@@ -22,6 +26,8 @@ const Authcontext = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [listingData, setListingData] = useState({});
+  const [allUserListingData, setAllUserListingData] = useState([]);
 
   const checkStatus = async () => {
     try {
@@ -145,6 +151,30 @@ const Authcontext = ({ children }) => {
     try {
       const data = await createListing(items);
       if (data) {
+        console.log("here===================>" + JSON.stringify(data.listing));
+        return data.listing;
+      }
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  const allUserListings = async () => {
+    try {
+      const data = await getAllListings();
+      if (data) {
+        return data.user.listings;
+      }
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  const deleteUserListing = async (listingId) => {
+    try {
+      console.log("starting");
+      const data = await deleteListing(listingId);
+      if (data) {
         console.log(data);
       }
     } catch (e) {
@@ -152,6 +182,27 @@ const Authcontext = ({ children }) => {
     }
   };
 
+  const getListing = async (listingId) => {
+    try {
+      const data = await getParticularListing(listingId);
+      if (data) {
+        return data.listing;
+      }
+    } catch (e) {
+      throw e;
+    }
+  };
+
+  const updateListing = async (listingId, items) => {
+    try {
+      const data = await updateParticularListing(listingId, items);
+      if (data) {
+        return data.listing;
+      }
+    } catch (e) {
+      throw e;
+    }
+  };
   const logout = async () => {
     // Replace this with your actual logout logic
     const data = await logoutUser();
@@ -175,6 +226,10 @@ const Authcontext = ({ children }) => {
         checkStatus,
         update,
         addListing,
+        allUserListings,
+        deleteUserListing,
+        getListing,
+        updateListing,
       }}
     >
       {children}

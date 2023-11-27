@@ -8,13 +8,15 @@ import {
 } from "firebase/storage";
 import { app } from "../firebase";
 import { useAuth } from "../context/Authcontext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const CreateListing = () => {
+const EditListing = () => {
   const auth = useAuth();
+  const params = useParams();
   const navigate = useNavigate();
   const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -33,7 +35,13 @@ const CreateListing = () => {
   console.log(formData);
   console.log(files);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    const fetchParticularUser = async (params) => {
+      const data = await auth.getListing(params);
+      setFormData(data);
+    };
+    fetchParticularUser(params.id);
+  }, [params]);
 
   const handlechange = (e) => {
     if (e.target.name === "rent" || e.target.name === "sell") {
@@ -125,14 +133,13 @@ const CreateListing = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      toast.loading("creating user Listing...", { id: "addListing" });
-      const data = await auth?.addListing(formData);
-      console.log("auth context data================" + data.id);
-      toast.success("added Listing successfully", { id: "addListing" });
+      toast.loading("updating user Listing...", { id: "addListing" });
+      const data = await auth?.updateListing(params.id, formData);
+      toast.success("updated Listing successfully", { id: "addListing" });
       setFormData({});
       navigate(`../listing/${data.id}`);
     } catch (e) {
-      toast.error("adding Listing error", { id: "addListing" });
+      toast.error("updating Listing error", { id: "addListing" });
     }
   };
   return (
@@ -151,6 +158,7 @@ const CreateListing = () => {
             className="border p-3 rounded-lg"
             name="name"
             required
+            value={formData.name}
             onChange={handlechange}
           />
           <textarea
@@ -159,6 +167,7 @@ const CreateListing = () => {
             className="border p-3 rounded-lg"
             name="description"
             required
+            value={formData.description}
             onChange={handlechange}
           />
           <input
@@ -167,6 +176,7 @@ const CreateListing = () => {
             className="border p-3 rounded-lg"
             name="address"
             required
+            value={formData.address}
             onChange={handlechange}
           />
           <div className="flex flex-wrap gap-4">
@@ -177,6 +187,7 @@ const CreateListing = () => {
                 type="checkbox"
                 checked={formData.type === "sell"}
                 name="sell"
+                value={formData.type}
               />
               <span className="text-sm">Sell</span>
             </div>
@@ -187,6 +198,7 @@ const CreateListing = () => {
                 type="checkbox"
                 checked={formData.type === "rent"}
                 name="rent"
+                value={formData.type}
               />
               <span className="text-sm">Rent</span>
             </div>
@@ -197,6 +209,7 @@ const CreateListing = () => {
                 type="checkbox"
                 checked={formData.parking}
                 name="parking"
+                value={formData.parking}
               />
               <span className="text-sm">Parking spot</span>
             </div>
@@ -207,6 +220,7 @@ const CreateListing = () => {
                 type="checkbox"
                 checked={formData.furnished}
                 name="furnished"
+                value={formData.furnished}
               />
               <span className="text-sm">Furnished</span>
             </div>
@@ -217,6 +231,7 @@ const CreateListing = () => {
                 type="checkbox"
                 checked={formData.offer}
                 name="offer"
+                value={formData.offer}
               />
               <span className="text-sm">Offer</span>
             </div>
@@ -230,6 +245,7 @@ const CreateListing = () => {
                 name="bedrooms"
                 id=""
                 onChange={handlechange}
+                value={formData.bedrooms}
               />
               <p>Beds</p>
             </div>
@@ -239,6 +255,7 @@ const CreateListing = () => {
                 type="number"
                 name="bathrooms"
                 onChange={handlechange}
+                value={formData.bathrooms}
               />
               <p>Baths</p>
               <small className="block">(Naira)</small>
@@ -250,6 +267,7 @@ const CreateListing = () => {
                 name="regularPrice"
                 id=""
                 onChange={handlechange}
+                value={formData.regularPrice}
               />
               <p>Regular Price</p>
               <small className="block">(NGN/Naira)</small>
@@ -260,6 +278,7 @@ const CreateListing = () => {
                 type="number"
                 name="discountPrice"
                 onChange={handlechange}
+                value={formData.discountPrice}
               />
               <p>Discounted Price</p>
               <small className="block">(NGN/month)</small>
@@ -338,4 +357,4 @@ const CreateListing = () => {
   );
 };
 
-export default CreateListing;
+export default EditListing;

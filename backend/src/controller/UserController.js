@@ -363,6 +363,32 @@ const createListing = async (req, res, next) => {
   }
 };
 
+const getUserListing = async (req, res, next) => {
+  const { id } = res.locals.jwtData;
+
+  if (!id) {
+    return next(errorHandler(404, "cant find user with listings"));
+  }
+
+  try {
+    const userRecords = await prisma.user.findUnique({
+      where: { id: id },
+      include: {
+        // Include the related records you want to retrieve
+        listings: true,
+      },
+    });
+    if (!userRecords) {
+      return next(errorHandler(404, "cant find user with listings"));
+    }
+    return res
+      .status(200)
+      .json({ message: "user with listings found", user: userRecords });
+  } catch (e) {
+    next();
+  }
+};
+
 module.exports = {
   loginUser,
   signUpUser,
@@ -371,4 +397,5 @@ module.exports = {
   logout,
   updateUser,
   createListing,
+  getUserListing,
 };

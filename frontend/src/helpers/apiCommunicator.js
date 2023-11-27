@@ -80,3 +80,42 @@ export const createListing = async (items) => {
   const data = response.data;
   return data;
 };
+
+export const getAllListings = async () => {
+  const response = await api.get("users/get-user-listings");
+  if (response.status !== 200) {
+    throw new Error("Unable to authenticate ");
+  }
+  const data = response.data;
+  return data;
+};
+
+export const deleteListing = async (listingId) => {
+  const response = await api.delete(`/listing/delete-listing/${listingId}`);
+  if (response.status !== 200) {
+    throw new Error("Unable to authenticate ");
+  }
+  const data = response.data;
+  return data;
+};
+
+export const getParticularListing = async (listingId) => {
+  const response = await api.get(`/listing/getListing/${listingId}`);
+  if (response.status !== 200) {
+    throw new Error("Unable to authenticate ");
+  }
+  const data = response.data;
+  return data;
+};
+
+export const updateParticularListing = async (listingId, items) => {
+  const response = await api.patch(
+    `/listing/updateListing/${listingId}`,
+    items
+  );
+  if (response.status !== 200) {
+    throw new Error("Unable to authenticate ");
+  }
+  const data = response.data;
+  return data;
+};

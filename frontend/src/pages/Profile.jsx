@@ -9,6 +9,7 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 import { app } from "../firebase";
+import ListingBox from "../components/ListingBox";
 
 const Profile = () => {
   const auth = useAuth();
@@ -25,6 +26,9 @@ const Profile = () => {
   const [file, setFile] = useState();
   const [filePercentage, setFilePercentage] = useState(0);
   const [fileUploadError, setFileUploadError] = useState(false);
+  const [userListings, setUserListings] = useState([]);
+  const [showListing, setShowListing] = useState(false);
+  const [loadingListing, setLoadingListing] = useState(false);
 
   const handleChange = (e) => {
     setUpdateData({ ...updateData, [e.target.name]: e.target.value });
@@ -83,6 +87,25 @@ const Profile = () => {
     } catch (e) {
       toast.error(e.response.data.message, { id: "update" });
     }
+  };
+
+  useEffect(() => {
+    const fetchUserListings = async () => {
+      setLoadingListing(true);
+      const data = await auth.allUserListings();
+      setUserListings(data);
+      setLoadingListing(false);
+    };
+    fetchUserListings();
+  }, []);
+
+  const handleDelete = (id) => {
+    console.log(id);
+    setUserListings(() => {
+      return userListings.filter((listing) => {
+        return listing.id !== id;
+      });
+    });
   };
 
   return (
@@ -164,6 +187,27 @@ const Profile = () => {
           <span onClick={handleSignOut}>Sign Out</span>
         </Link>
       </div>
+      <div>
+        <button
+          onClick={() => setShowListing((prev) => !prev)}
+          className="text-green-700 flex self-center  mx-auto text-sm font-bold pt-12"
+        >
+          {showListing ? "REMOVE LISTING " : "SHOW LISTING"}
+        </button>
+      </div>
+
+      {loadingListing ? (
+        <p>loading listings.....</p>
+      ) : showListing ? (
+        <>
+          <h2 className="text-center text-lg font-bold py-5">Your Listing</h2>
+          {userListings?.map((listing) => {
+            return <ListingBox {...listing} handleDelete={handleDelete} />;
+          })}
+        </>
+      ) : (
+        ""
+      )}
     </div>
   );
 };
