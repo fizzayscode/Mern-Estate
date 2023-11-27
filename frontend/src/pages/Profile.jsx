@@ -201,7 +201,7 @@ const Profile = () => {
       ) : showListing ? (
         <>
           <h2 className="text-center text-lg font-bold py-5">Your Listing</h2>
-          {userListings?.map((listing) => {
+          {userListings?.map((listing, index) => {
             return <ListingBox {...listing} handleDelete={handleDelete} />;
           })}
         </>

@@ -95,6 +95,7 @@ export const deleteListing = async (listingId) => {
   if (response.status !== 200) {
     throw new Error("Unable to authenticate ");
   }
+
   const data = response.data;
   return data;
 };

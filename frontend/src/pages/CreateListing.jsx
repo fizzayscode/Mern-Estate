@@ -329,8 +329,9 @@ const CreateListing = () => {
           <button
             type="submit"
             className="bg-slate-700 text-white rounded-lg hover:opacity-90 p-2 my-6"
+            disabled={loading}
           >
-            Create Farm
+            Create Listing
           </button>
         </div>
       </form>
