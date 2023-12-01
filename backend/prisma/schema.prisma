@@ -37,4 +37,5 @@ model Listing{
   images String[]
   userId String  @map("user_id") @db.Uuid
   user User  @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now()) 
 }

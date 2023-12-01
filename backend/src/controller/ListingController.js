@@ -36,12 +36,7 @@ const deleteListing = async (req, res, next) => {
 };
 
 const getListing = async (req, res, next) => {
-  const userId = res.locals.jwtData.id;
   const { id } = req.params;
-
-  if (!userId) {
-    return next(errorHandler(404, "cant find user with listings"));
-  }
 
   try {
     const findListing = await prisma.listing.findUnique({
@@ -50,9 +45,6 @@ const getListing = async (req, res, next) => {
 
     if (!findListing) {
       return next(errorHandler(404, "cant find this particular listings"));
-    }
-    if (findListing.userId !== userId) {
-      return next(errorHandler(403, "Unauthorized to access this listing"));
     }
 
     res.status(200).json({ message: "Listing Found", listing: findListing });
@@ -118,4 +110,85 @@ const editListing = async (req, res, next) => {
   }
 };
 
-module.exports = { deleteListing, getListing, editListing };
+const getListings = async (req, res, next) => {
+  try {
+    const limit = parseInt(req.query.limit) || 5;
+    const start = parseInt(req.query.start) || 0;
+    console.log("limit ====================" + limit);
+    console.log("start ====================" + start);
+    let offer = req.query.offer;
+
+    const whereClause = {
+      AND: [],
+      OR: [],
+    };
+    if (offer === undefined || offer === "false" || offer === false) {
+      whereClause.OR.push({ offer: true }, { offer: false });
+    } else {
+      whereClause.AND.push({ offer: true });
+    }
+
+    let furnished = req.query.furnished;
+    if (
+      furnished === undefined ||
+      furnished === "false" ||
+      furnished === false
+    ) {
+      whereClause.OR.push({ furnished: true }, { furnished: false });
+    } else {
+      whereClause.AND.push({ furnished: true });
+    }
+
+    let parking = req.query.parking;
+    if (parking === undefined || parking === "false" || parking === false) {
+      whereClause.OR.push({ parking: true }, { parking: false });
+    } else {
+      whereClause.AND.push({ parking: true });
+    }
+
+    let type = req.query.type;
+    if (type === undefined || type === "all") {
+      whereClause.OR.push({ type: "rent" }, { type: "sale" });
+    } else if (type === "sale") {
+      whereClause.AND.push({ type: "sale" });
+    } else {
+      whereClause.AND.push({ type: "rent" });
+    }
+
+    const searchTerm = req.query.searchTerm || "";
+
+    if (searchTerm.length > 0) {
+      whereClause.AND.push({
+        name: {
+          contains: searchTerm,
+          mode: "insensitive",
+        },
+      });
+    }
+
+    const sort = req.query.sort || "createdAt";
+
+    const order = req.query.order || "desc";
+    console.log(whereClause);
+
+    const results = await prisma.listing.findMany({
+      take: limit,
+      skip: start,
+      where: whereClause,
+      orderBy: {
+        [sort]: order,
+      },
+    });
+    console.log(
+      `offer=${offer}, furnished=${furnished} parking=${parking} ,type=${type}`
+    );
+
+    return res
+      .status(200)
+      .json({ message: "listings found", listings: results });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { deleteListing, getListing, editListing, getListings };

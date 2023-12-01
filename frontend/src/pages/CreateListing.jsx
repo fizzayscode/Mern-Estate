@@ -36,7 +36,7 @@ const CreateListing = () => {
   useEffect(() => {}, []);
 
   const handlechange = (e) => {
-    if (e.target.name === "rent" || e.target.name === "sell") {
+    if (e.target.name === "rent" || e.target.name === "sale") {
       setFormData({ ...formData, type: e.target.name });
     }
     if (
@@ -175,8 +175,8 @@ const CreateListing = () => {
                 onChange={handlechange}
                 className="w-5 h-5"
                 type="checkbox"
-                checked={formData.type === "sell"}
-                name="sell"
+                checked={formData.type === "sale"}
+                name="sale"
               />
               <span className="text-sm">Sell</span>
             </div>

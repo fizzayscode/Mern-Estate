@@ -6,6 +6,7 @@ const {
   generateSignature,
   checkPassword,
 } = require("../Utility/passwordUtils");
+const { clearAndMakeCookie } = require("../Utility/cookie");
 
 const signUpUser = async (req, res, next) => {
   const { email, username, password } = req.body;
@@ -17,49 +18,33 @@ const signUpUser = async (req, res, next) => {
     username.trim() == "" ||
     password.trim() == ""
   ) {
-    next(errorHandler(404, "provide name email and password"));
-  }
-  const exisitingUser = await prisma.user.findUnique({
-    where: { email: email },
-  });
-  if (exisitingUser) {
-    next(errorHandler(400, "user with email already exists"));
+    return next(errorHandler(404, "provide name email and password"));
   }
   try {
+    const exisitingUser = await prisma.user.findUnique({
+      where: { email: email },
+    });
+    if (exisitingUser) {
+      return next(errorHandler(400, "user with email already exists"));
+    }
+
     const encryptedPassword = await encryptPassword(password);
     console.log(encryptedPassword);
     const user = await prisma.user.create({
       data: { username, email, password: encryptedPassword },
     });
-    res.clearCookie(process.env.COOKIE_NAME, {
-      path: "/",
-      domain: "localhost",
-      httpOnly: true,
-      // encrypt thr cookie in a signed format
-      signed: true,
-    });
-    const expires = new Date();
-    expires.setDate(expires.getDate() + 7);
-    // i want to store the cookie in the root director
-    // rememember to chnage the domain after hosting your application
-
     const token = generateSignature({
       id: user.id,
       username: user.username,
       email: user.email,
     });
 
-    res.cookie(process.env.COOKIE_NAME, token, {
-      path: "/",
-      domain: "localhost",
-      expires: expires,
-      httpOnly: true,
-      // encrypt thr cookie in a signed format
-      signed: true,
-    });
     console.log(user);
     // removing the password before sending remainign to the frontend
     const { password: remPassword, ...rest } = user;
+
+    await clearAndMakeCookie(res, process.env.COOKIE_NAME, token);
+    console.log("after clearing the cookie");
     return res.status(201).json({
       message: "USER CREATED",
       user: rest,
@@ -90,27 +75,7 @@ const loginUser = async (req, res, next) => {
       username: user.username,
       email: user.email,
     });
-    console.log(token);
-    res.clearCookie(process.env.COOKIE_NAME, {
-      path: "/",
-      domain: "localhost",
-      httpOnly: true,
-      // encrypt thr cookie in a signed format
-      signed: true,
-    });
-    const expires = new Date();
-    expires.setDate(expires.getDate() + 7);
-    // i want to store the cookie in the root director
-    // rememember to chnage the domain after hosting your application
-
-    res.cookie(process.env.COOKIE_NAME, token, {
-      path: "/",
-      domain: "localhost",
-      expires: expires,
-      httpOnly: true,
-      // encrypt thr cookie in a signed format
-      signed: true,
-    });
+    await clearAndMakeCookie(res, process.env.COOKIE_NAME, token);
     const { password: password, ...rest } = user;
 
     return res.status(200).json({
@@ -173,14 +138,7 @@ const googleLogin = async (req, res, next) => {
         password: hashedPassword,
       },
     });
-    console.log(newUser);
-    res.clearCookie(process.env.COOKIE_NAME, {
-      path: "/",
-      domain: "localhost",
-      httpOnly: true,
-      // encrypt thr cookie in a signed format
-      signed: true,
-    });
+
     const expires = new Date();
     expires.setDate(expires.getDate() + 7);
     // i want to store the cookie in the root director
@@ -190,25 +148,11 @@ const googleLogin = async (req, res, next) => {
       username: newUser.username,
       email: newUser.email,
     });
+    await clearAndMakeCookie(res, process.env.COOKIE_NAME, token);
 
-    res.cookie(process.env.COOKIE_NAME, token, {
-      path: "/",
-      domain: "localhost",
-      expires: expires,
-      httpOnly: true,
-      // encrypt thr cookie in a signed format
-      signed: true,
-    });
     const { password: password, ...rest } = newUser;
     return res.status(201).json({ message: "user created", user: rest });
   } else {
-    res.clearCookie(process.env.COOKIE_NAME, {
-      path: "/",
-      domain: "localhost",
-      httpOnly: true,
-      // encrypt thr cookie in a signed format
-      signed: true,
-    });
     const expires = new Date();
     expires.setDate(expires.getDate() + 7);
     // i want to store the cookie in the root director
@@ -219,20 +163,10 @@ const googleLogin = async (req, res, next) => {
       email: user.email,
     });
 
-    res.cookie(process.env.COOKIE_NAME, token, {
-      path: "/",
-      domain: "localhost",
-      expires: expires,
-      httpOnly: true,
-      // encrypt thr cookie in a signed format
-      signed: true,
-    });
+    await clearAndMakeCookie(res, process.env.COOKIE_NAME, token);
     const { password: password, ...rest } = user;
     return res.status(200).json({ message: "logged in", user: rest });
   }
-  // } catch (e) {
-  //   return next(errorHandler(500, "internal server error"));
-  // }
 };
 
 const logout = (req, res, next) => {
@@ -389,6 +323,26 @@ const getUserListing = async (req, res, next) => {
   }
 };
 
+const getUser = async (req, res, next) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return next(errorHandler(404, "user not found"));
+  }
+
+  try {
+    const user = await prisma.user.findUnique({ where: { id: id } });
+    if (!user) {
+      return next(errorHandler(404, "user not found"));
+    }
+    const { password, ...rest } = user;
+
+    return res.status(200).json({ message: "user found", user: rest });
+  } catch (e) {
+    return next();
+  }
+};
+
 module.exports = {
   loginUser,
   signUpUser,
@@ -398,4 +352,5 @@ module.exports = {
   updateUser,
   createListing,
   getUserListing,
+  getUser,
 };

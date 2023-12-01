@@ -120,3 +120,12 @@ export const updateParticularListing = async (listingId, items) => {
   const data = response.data;
   return data;
 };
+
+export const getParticularUser = async (userId) => {
+  const response = await api.get(`/users/${userId}`);
+  if (response.status !== 200) {
+    throw new Error("Unable to authenticate ");
+  }
+  const data = response.data;
+  return data;
+};

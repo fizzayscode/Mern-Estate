@@ -8,9 +8,8 @@ const SignUp = () => {
   const navigate = useNavigate();
   const auth = useAuth();
   const [signUpData, setsignUpData] = useState({
-    name: "",
+    username: "",
     email: "",
-    phone: "",
     password: "",
   });
   const handlechange = (e) => {
@@ -21,10 +20,10 @@ const SignUp = () => {
     e.preventDefault();
     try {
       toast.loading("signing up user", { id: "signup" });
+      console.log(signUpData);
       await auth?.signup(
         signUpData.username,
         signUpData.email,
-        signUpData.phone,
         signUpData.password
       );
       toast.success("signed up successfully", { id: "signup" });
@@ -63,7 +62,7 @@ const SignUp = () => {
           name="password"
           onChange={handlechange}
         />
-        
+
         <button
           type="submit"
           className="font-bold bg-slate-700 rounded-lg text-white py-2 hover:opacity-90 disabled:opacity-80"

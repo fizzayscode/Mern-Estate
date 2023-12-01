@@ -5,6 +5,7 @@ import {
   deleteListing,
   getAllListings,
   getParticularListing,
+  getParticularUser,
   googleAuth,
   loginUser,
   logoutUser,
@@ -211,6 +212,17 @@ const Authcontext = ({ children }) => {
     setIsLoggedIn(false);
   };
 
+  const getUser = async (userId) => {
+    try {
+      const data = await getParticularUser(userId);
+      if (data) {
+        return data.user;
+      }
+    } catch (e) {
+      throw e;
+    }
+  };
+
   return (
     <GlobalContext.Provider
       value={{
@@ -230,6 +242,7 @@ const Authcontext = ({ children }) => {
         deleteUserListing,
         getListing,
         updateListing,
+        getUser,
       }}
     >
       {children}
