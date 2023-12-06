@@ -1,5 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+
 const errorHandler = require("../Utility/customErrorHandler");
 const {
   encryptPassword,
@@ -7,6 +7,7 @@ const {
   checkPassword,
 } = require("../Utility/passwordUtils");
 const { clearAndMakeCookie } = require("../Utility/cookie");
+const prisma = new PrismaClient();
 
 const signUpUser = async (req, res, next) => {
   const { email, username, password } = req.body;
