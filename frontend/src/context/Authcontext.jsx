@@ -15,7 +15,7 @@ import {
   updateUser,
 } from "../helpers/apiCommunicator";
 import { useNavigate, useParams } from "react-router-dom";
-const GlobalContext = createContext(null);
+const GlobalContext = createContext(undefined);
 const params = useParams();
 
 const Authcontext = ({ children }) => {
