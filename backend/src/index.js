@@ -13,6 +13,7 @@ const allowedOrigin = [
   "http://fizzays-mern-estae.onrender.com",
   "http://localhost:5173",
 ];
+
 const corsOptions = {
   origin: function (origin, callback) {
     if (allowedOrigin.indexOf(origin) !== -1 || !origin) {
@@ -25,6 +26,27 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
+
+// middleware for setting cors headers
+app.use((req, res, next) => {
+  res.header(
+    "Access-Control-Allow-Origin",
+    "https://fizzays-mern-estae.onrender.com"
+  );
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, OPTIONS, PUT, PATCH, DELETE"
+  );
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.header("Access-Control-Allow-Credentials", "true");
+
+  // Handle preflight requests
+  if (req.method === "OPTIONS") {
+    res.status(200).end();
+  } else {
+    next();
+  }
+});
 app.use(express.static(path.join(dirname, "/frontend/dist")));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use("/api/v1", appRouter);
