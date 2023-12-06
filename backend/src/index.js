@@ -10,7 +10,7 @@ const app = express();
 app.use(express.json());
 const allowedOrigin = [
   "http://localhost:5173",
-  "https://fizzays-mern-estae.onrender.com/",
+  "https://fizzays-mern-estae.onrender.com",
 ];
 const corsOptions = {
   origin: function (origin, callback) {
