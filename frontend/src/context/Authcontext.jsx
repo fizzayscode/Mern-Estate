@@ -38,7 +38,7 @@ const Authcontext = ({ children }) => {
 
       if (user) {
         setUser({
-          id: user.id,
+          id: user?.id,
           username: user.username,
           email: user.email,
           password: user.password,
