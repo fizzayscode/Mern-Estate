@@ -82,8 +82,8 @@ const SearchListing = () => {
       urlParams.set("sort", sidebarData.sort);
       urlParams.set("order", sidebarData.order);
       const searchQuery = urlParams.toString();
-      navigate(`/search?${searchQuery}`);
       console.log(searchQuery);
+      navigate(`/search?${searchQuery}`);
       setLoading(true);
       const data = await auth.searchAllListings(searchQuery);
       if (data.length < 1) {
@@ -92,6 +92,8 @@ const SearchListing = () => {
       }
       if (data.length > 5) {
         setShowMore(true);
+      } else {
+        setShowMore(false);
       }
       setLoading(false);
       setSearchedData(data);
