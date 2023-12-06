@@ -9,6 +9,7 @@ import {
   googleAuth,
   loginUser,
   logoutUser,
+  searchListings,
   signUpUser,
   updateParticularListing,
   updateUser,
@@ -223,6 +224,15 @@ const Authcontext = ({ children }) => {
     }
   };
 
+  const searchAllListings = async (searchQuery) => {
+    try {
+      const data = await searchListings(searchQuery);
+      return data.listings;
+    } catch (e) {
+      throw e;
+    }
+  };
+
   return (
     <GlobalContext.Provider
       value={{
@@ -230,6 +240,7 @@ const Authcontext = ({ children }) => {
         error,
         user,
         logout,
+        searchAllListings,
         setUser,
         isLoggedIn,
         setIsLoggedIn,

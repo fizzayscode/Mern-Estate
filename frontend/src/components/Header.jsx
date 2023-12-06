@@ -1,12 +1,30 @@
-import React, { useEffect, useLayoutEffect } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useLayoutEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { FaSearch } from "react-icons/fa";
 import { useAuth } from "../context/Authcontext";
 
 const Header = () => {
   const auth = useAuth();
+  const [searchTerm, setSearchTerm] = useState("");
+  const navigate = useNavigate();
 
-  console.log("keeps rendering ");
+  useEffect(() => {
+    const urlparams = new URLSearchParams(location.search);
+    const searchItem = urlparams.get("searchTerm");
+    if (searchItem) {
+      setSearchTerm(searchItem);
+    }
+  }, [location.search]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const urlparams = new URLSearchParams(window.location.search);
+    urlparams.set("searchTerm", searchTerm);
+    const searchQuery = urlparams.toString();
+    console.log(searchQuery);
+    navigate(`/search?${searchQuery}`);
+  };
+
   return (
     <header className=" bg-slate-200 shadow-md px-2 ">
       <div className="flex justify-between max-lg py-3 flex-wrap items-center max-w-6xl mx-auto">
@@ -19,16 +37,23 @@ const Header = () => {
           </Link>
         </div>
 
-        <div className="flex items-center p-2 bg-slate-100 rounded">
+        <form
+          onSubmit={handleSubmit}
+          className="flex items-center p-2 bg-slate-100 rounded"
+        >
           <input
             className="outline-none rounded-lg bg-transparent w-24 sm:w-64"
             type="text"
             name=""
             id=""
             placeholder="Search..."
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+            }}
+            value={searchTerm}
           />
-          <FaSearch />
-        </div>
+          <FaSearch className="cursor-pointer" onClick={handleSubmit} />
+        </form>
         <ul className="flex gap-4 text-xs text-slate-700 font-bold  ">
           <li className="hidden sm:inline hover:underline self-center">
             <Link to={"/"}>HOME</Link>

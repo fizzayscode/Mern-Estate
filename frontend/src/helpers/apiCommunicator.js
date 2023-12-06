@@ -129,3 +129,16 @@ export const getParticularUser = async (userId) => {
   const data = response.data;
   return data;
 };
+
+export const searchListings = async (searchQuery) => {
+  console.log("here======================");
+  const response = await api.get(`/listing/get?${searchQuery}`);
+  console.log(response);
+  if (response.status !== 200) {
+    throw new Error("Unable to authenticate ");
+  }
+  // console.log(response);
+  const data = response.data;
+  console.log(data);
+  return data;
+};

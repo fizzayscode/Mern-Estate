@@ -13,6 +13,7 @@ import { useAuth } from "./context/Authcontext";
 import CreateListing from "./pages/CreateListing";
 import ParticularListing from "./pages/ParticularListing";
 import EditListing from "./pages/EditListing";
+import SearchListing from "./pages/SearchListing";
 
 function App() {
   const auth = useAuth();
@@ -26,6 +27,7 @@ function App() {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/login" element={<Login />} />
         <Route path="listing/:id" element={<ParticularListing />} />
+        <Route path="/search" element={<SearchListing />} />
         <Route element={<PrivateRoute />}>
           <Route path="/profile/:id" element={<Profile />} />
           <Route path="/create-listing" element={<CreateListing />} />

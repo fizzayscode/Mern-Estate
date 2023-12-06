@@ -13,3 +13,7 @@ body {
 input[type="number"] {
   width: 70px;
 }
+
+img {
+  width: 100%;
+}
