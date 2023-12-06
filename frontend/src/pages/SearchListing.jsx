@@ -82,7 +82,6 @@ const SearchListing = () => {
       urlParams.set("sort", sidebarData.sort);
       urlParams.set("order", sidebarData.order);
       const searchQuery = urlParams.toString();
-      console.log(searchQuery);
       navigate(`/search?${searchQuery}`);
       setLoading(true);
       const data = await auth.searchAllListings(searchQuery);
@@ -241,7 +240,7 @@ const SearchListing = () => {
         </h1>
         <div className="flex flex-wrap md:justify-center lg:justify-normal">
           {loading && <h1 className="text-center text-xl">Loading....</h1>}
-          {searchedData < 1 && buttonClicked && (
+          {!loading && searchedData < 1 && buttonClicked && (
             <h1 className="text-center text-xl">No Listing Found</h1>
           )}
           {searchedData &&
