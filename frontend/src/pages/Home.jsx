@@ -8,6 +8,7 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 
 import { Swiper, SwiperSlide } from "swiper/react";
+import ListingCard from "../components/ListingCard";
 
 const Home = () => {
   const auth = useAuth();
@@ -110,6 +111,68 @@ const Home = () => {
           })}
         </Swiper>
       )}
+
+      <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 my-10">
+        {offerData && offerData.length > 0 && (
+          <div>
+            <div className="px-3">
+              <h1 className="text-2xl text-slate-600 font-bold capitalize">
+                recent offers
+              </h1>
+              <Link
+                className=" text-blue-600 text-sm"
+                to={"/search?offer=true"}
+              >
+                show more offers
+              </Link>
+            </div>
+            <div className="flex flex-wrap  gap-4">
+              {offerData.map((listing) => {
+                return <ListingCard listing={listing} />;
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 my-10">
+        {rentData && rentData.length > 0 && (
+          <div>
+            <div className="px-3">
+              <h1 className="text-2xl text-slate-600 font-bold capitalize">
+                recent places for rent
+              </h1>
+              <Link className=" text-blue-600 text-sm" to={"/search?type=rent"}>
+                show more places for rent
+              </Link>
+            </div>
+            <div className="flex flex-wrap  gap-4">
+              {rentData.map((listing) => {
+                return <ListingCard listing={listing} />;
+              })}
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="max-w-6xl mx-auto p-3 flex flex-col gap-8 my-10">
+        {saleData && saleData.length > 0 && (
+          <div>
+            <div className="px-3">
+              <h1 className="text-2xl text-slate-600 font-bold capitalize">
+                recent places for sale
+              </h1>
+              <Link className=" text-blue-600 text-sm" to={"/search?type=sale"}>
+                show more places for sale
+              </Link>
+            </div>
+            <div className="flex flex-wrap  gap-4">
+              {saleData.map((listing) => {
+                return <ListingCard listing={listing} />;
+              })}
+            </div>
+          </div>
+        )}
+      </div>
     </main>
   );
 };
