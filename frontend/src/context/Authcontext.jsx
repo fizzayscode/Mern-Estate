@@ -14,8 +14,9 @@ import {
   updateParticularListing,
   updateUser,
 } from "../helpers/apiCommunicator";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 const GlobalContext = createContext(null);
+const params = useParams();
 
 const Authcontext = ({ children }) => {
   const navigate = useNavigate();
@@ -38,13 +39,12 @@ const Authcontext = ({ children }) => {
 
       if (user) {
         setUser({
-          id: user?.id,
+          id: params.id,
           username: user.username,
           email: user.email,
           password: user.password,
           avatar: user.avatar.trim(),
         });
-
         setIsLoggedIn(true);
       } else {
         setUser(null);

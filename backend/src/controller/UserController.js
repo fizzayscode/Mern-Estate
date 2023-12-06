@@ -102,8 +102,8 @@ const verifyUser = async (req, res) => {
     }
 
     const { password: password, ...rest } = user;
-    console.log(rest);
-    res.status(200).json({ message: "user Found", user: rest });
+    console.log("here==============" + { ...rest });
+    res.status(200).json({ message: "user Found", user: { ...rest } });
   } catch (e) {
     // console.error("Error verifying user:", error);
     res.status(500).json({ message: "Internal server error" });

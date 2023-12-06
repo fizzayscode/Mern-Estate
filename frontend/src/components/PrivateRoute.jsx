@@ -20,8 +20,7 @@ const PrivateRoute = () => {
     return <div>Loading...</div>;
   } else {
     return (
-      // <div>{auth?.isLoggedIn ?  <Outlet />: <Navigate to="/login" />}</div>
-      <Outlet />
+      <div>{auth?.isLoggedIn ? <Outlet /> : <Navigate to="/login" />}</div>
     );
   }
 };
