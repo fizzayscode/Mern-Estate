@@ -5,11 +5,11 @@ import { FaLocationDot } from "react-icons/fa6";
 const ListingCard = ({ listing }) => {
   return (
     <Link to={`/listing/${listing.id}`}>
-      <main className="w-60 flex flex-col min-h-[325px] shadow-lg bg-white m-5">
+      <main className="w-60 flex flex-col min-h-[325px] shadow-lg bg-white m-3 overflow-hidden">
         <div className="flex flex-col gap-4 ">
           <div>
             <img
-              className="max-w-full object-contain"
+              className="max-w-full object-contain hover:scale-110 transition-transform duration-300 ease-in-out transform"
               src={listing.images[0]}
               alt="listing image"
             />

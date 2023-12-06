@@ -8,7 +8,9 @@ const SearchListing = () => {
   const navigate = useNavigate();
   const auth = useAuth();
   const [searchedData, setSearchedData] = useState([]);
+  const [showMore, setShowMore] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [buttonClicked, setButtonClicked] = useState(false);
   const [sidebarData, setSidebarData] = useState({
     searchTerm: "",
     type: "all",
@@ -18,6 +20,20 @@ const SearchListing = () => {
     sort: "createdAt",
     order: "desc",
   });
+
+  const showMoreClick = async () => {
+    const length = searchedData.length;
+    const start = length;
+
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set("start", start);
+    const query = urlParams.toString();
+    const data = await auth.searchAllListings(query);
+    if (data.length < 6) {
+      setShowMore(false);
+    }
+    setSearchedData([...searchedData, ...data]);
+  };
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -44,7 +60,7 @@ const SearchListing = () => {
         parking: parking === "true" ? true : false,
         furnished: furnished === "true" ? true : false,
         offer: offer === "true" ? true : false,
-        sort: sort || "created_At",
+        sort: sort || "createdAt",
         order: order || "desc",
       });
     }
@@ -52,6 +68,7 @@ const SearchListing = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setButtonClicked(true);
     try {
       toast.loading("searching for your data", { id: "search" });
       //   im creating a new url search params caus ei wan tit to discard the old one and create a new one here for me
@@ -65,15 +82,19 @@ const SearchListing = () => {
       urlParams.set("sort", sidebarData.sort);
       urlParams.set("order", sidebarData.order);
       const searchQuery = urlParams.toString();
+      navigate(`/search?${searchQuery}`);
+      console.log(searchQuery);
       setLoading(true);
       const data = await auth.searchAllListings(searchQuery);
       if (data.length < 1) {
         setLoading(false);
-        toast.success("no data found with this search term");
+        toast.success("no data found with this search term", { id: "search" });
+      }
+      if (data.length > 5) {
+        setShowMore(true);
       }
       setLoading(false);
       setSearchedData(data);
-      console.log("ere=================" + searchedData);
       toast.success(`${data.length} search found`, { id: "search" });
     } catch (e) {
       setLoading(false);
@@ -216,16 +237,24 @@ const SearchListing = () => {
         <h1 className="text-2xl font-bold border-b  text-slate-700">
           listing result:
         </h1>
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap md:justify-center lg:justify-normal">
           {loading && <h1 className="text-center text-xl">Loading....</h1>}
-          {searchedData < 1 && (
+          {searchedData < 1 && buttonClicked && (
             <h1 className="text-center text-xl">No Listing Found</h1>
           )}
           {searchedData &&
             !loading &&
-            searchedData.map((listing) => {
+            searchedData?.map((listing) => {
               return <ListingCard listing={listing} />;
             })}
+          {showMore && (
+            <button
+              onClick={showMoreClick}
+              className="text-green-700 text-center text-md w-full mr-12 py-3 font-semibold hover:underline"
+            >
+              SHOW MORE
+            </button>
+          )}
         </div>
       </div>
     </div>

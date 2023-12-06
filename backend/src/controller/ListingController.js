@@ -112,7 +112,7 @@ const editListing = async (req, res, next) => {
 
 const getListings = async (req, res, next) => {
   try {
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = parseInt(req.query.limit) || 6;
     const start = parseInt(req.query.start) || 0;
     console.log("limit ====================" + limit);
     console.log("start ====================" + start);
