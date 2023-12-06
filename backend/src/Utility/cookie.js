@@ -5,16 +5,14 @@ const clearAndMakeCookie = (res, cookieName, token) => {
     try {
       console.log("before clearing the cookie=======================1");
       res.clearCookie(cookieName, {
-        path: "/",
-        domain: "localhost",
+        domain: "https://fizzays-mern-estae.onrender.com/",
         httpOnly: true,
         signed: true,
       });
       console.log("after clearing the cookie=======================2");
       console.log("before setting the cookie=======================3");
       res.cookie(process.env.COOKIE_NAME, token, {
-        path: "/",
-        domain: "localhost",
+        domain: "https://fizzays-mern-estae.onrender.com/",
         expires: expires,
         httpOnly: true,
         signed: true,
