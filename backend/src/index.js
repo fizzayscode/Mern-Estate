@@ -9,7 +9,7 @@ const dirname = path.resolve();
 const app = express();
 app.use(express.json());
 const allowedOrigin = [
-  "http://fizzays-mern-estae.onrender.com",
+  "https://fizzays-mern-estae.onrender.com",
   "http://localhost:5173",
 ];
 const corsOptions = {
