@@ -31,7 +31,8 @@ app.use(cors(corsOptions));
 app.use((req, res, next) => {
   res.header(
     "Access-Control-Allow-Origin",
-    "https://fizzays-mern-estae.onrender.com"
+    "https://fizzays-mern-estae.onrender.com",
+    "http://localhost:5173"
   );
   res.header(
     "Access-Control-Allow-Methods",

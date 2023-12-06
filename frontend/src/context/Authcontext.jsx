@@ -44,7 +44,6 @@ const Authcontext = ({ children }) => {
           password: user.password,
           avatar: user.avatar.trim(),
         });
-
         setIsLoggedIn(true);
       } else {
         setUser(null);
