@@ -45,7 +45,6 @@ const signUpUser = async (req, res, next) => {
     const { password: remPassword, ...rest } = user;
 
     await clearAndMakeCookie(res, process.env.COOKIE_NAME, token);
-    console.log("after clearing the cookie");
     return res.status(201).json({
       message: "USER CREATED",
       user: rest,
@@ -78,7 +77,6 @@ const loginUser = async (req, res, next) => {
     });
     await clearAndMakeCookie(res, process.env.COOKIE_NAME, token);
     const { password: password, ...rest } = user;
-
     return res.status(200).json({
       message: "LOGGED IN SUCCESSFULLY",
       user: rest,
@@ -101,8 +99,8 @@ const verifyUser = async (req, res) => {
         .json({ message: "user not found or token malfunctioned" });
     }
 
+    console.log(user);
     const { password: password, ...rest } = user;
-    console.log("here==============" + { ...rest });
     res.status(200).json({ message: "user Found", user: { ...rest } });
   } catch (e) {
     // console.error("Error verifying user:", error);

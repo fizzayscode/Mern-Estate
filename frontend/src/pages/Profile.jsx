@@ -100,7 +100,6 @@ const Profile = () => {
   }, []);
 
   const handleDelete = (id) => {
-    console.log(id);
     setUserListings(() => {
       return userListings.filter((listing) => {
         return listing.id !== id;

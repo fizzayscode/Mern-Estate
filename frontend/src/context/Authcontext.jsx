@@ -36,6 +36,7 @@ const Authcontext = ({ children }) => {
     try {
       const data = await checkAuthStatus();
       const user = data.user;
+      console.log(user);
 
       if (user) {
         setUser({
@@ -153,7 +154,6 @@ const Authcontext = ({ children }) => {
     try {
       const data = await createListing(items);
       if (data) {
-        console.log("here===================>" + JSON.stringify(data.listing));
         return data.listing;
       }
     } catch (e) {

@@ -13,18 +13,14 @@ const Oauth = ({ text }) => {
       const provider = new GoogleAuthProvider();
       const auth = getAuth(app);
       const result = await signInWithPopup(auth, provider);
-      console.log(result.user.email);
       const email = result.user.email;
       const photo = result.user.photoURL;
-
       toast.loading("signing in user", { id: "google" });
       await contextAuth.googleAuthSign(email, photo);
       toast.success("signed in successfully", { id: "google" });
-
       navigate("/");
     } catch (e) {
-      //   toast.error(e.response.data.message, { id: "google" });
-      console.log(e);
+      toast.error(e.response.data.message, { id: "google" });
     }
   };
   return (

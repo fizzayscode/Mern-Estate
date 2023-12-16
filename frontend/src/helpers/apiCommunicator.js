@@ -7,13 +7,11 @@ export const signUpUser = async (username, email, password) => {
       email,
       password,
     });
-    console.log(response);
     if (response.status !== 201) {
       throw new Error("unable to sign up");
     }
     return response.data;
   } catch (e) {
-    console.log(e);
     throw e;
   }
 };
@@ -131,14 +129,10 @@ export const getParticularUser = async (userId) => {
 };
 
 export const searchListings = async (searchQuery) => {
-  console.log("here======================");
   const response = await api.get(`/listing/get?${searchQuery}`);
-  console.log(response);
   if (response.status !== 200) {
     throw new Error("Unable to authenticate ");
   }
-  // console.log(response);
   const data = response.data;
-  console.log(data);
   return data;
 };

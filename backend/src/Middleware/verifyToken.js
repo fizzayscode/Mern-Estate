@@ -3,7 +3,6 @@ require("dotenv").config();
 
 const verifyToken = (req, res, next) => {
   const token = req.signedCookies[`${process.env.COOKIE_NAME}`];
-  console.log(token);
   if (!token || token.trim == "") {
     throw new Error("no token provided");
   }

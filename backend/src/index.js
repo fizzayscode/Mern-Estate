@@ -51,12 +51,13 @@ app.use((req, res, next) => {
 app.use(express.static(path.join(dirname, "/frontend/dist")));
 app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use("/api/v1", appRouter);
+
+// any file i go to that is not api/v1/ it should send this html file
 app.get("*", (req, res) => {
   res.sendFile(path.join(dirname, "frontend", "dist", "index.html"));
 });
 app.use(errorHandlerMiddleWare);
 
-// any file i go to that is not api/v1/ it should send this html file
 app.listen(process.env.PORT, () => {
   console.log("running on port 8080");
 });

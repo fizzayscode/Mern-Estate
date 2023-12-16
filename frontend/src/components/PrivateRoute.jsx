@@ -15,14 +15,11 @@ const PrivateRoute = () => {
     checkAuthentication();
   }, []);
 
-  if (loading) {
+  if (loading)
     // You can return a loading indicator or null while checking authentication
     return <div>Loading...</div>;
-  } else {
-    return (
-      <div>{auth?.isLoggedIn ? <Outlet /> : <Navigate to="/login" />}</div>
-    );
-  }
+
+  return <div>{auth?.isLoggedIn ? <Outlet /> : <Navigate to="/login" />}</div>;
 };
 
 export default PrivateRoute;

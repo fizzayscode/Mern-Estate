@@ -127,7 +127,6 @@ const CreateListing = () => {
     try {
       toast.loading("creating user Listing...", { id: "addListing" });
       const data = await auth?.addListing(formData);
-      console.log("auth context data================" + data.id);
       toast.success("added Listing successfully", { id: "addListing" });
       setFormData({});
       navigate(`../listing/${data.id}`);
